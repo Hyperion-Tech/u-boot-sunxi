@@ -145,7 +145,8 @@ static void get_name(dir_entry *dirent, char *s_name)
 }
 
 static int flush_dirty_fat_buffer(fsdata *mydata);
-#if !defined(CONFIG_FAT_WRITE)
+
+#if !CONFIG_IS_ENABLED(FAT_WRITE)
 /* Stub for read only operation */
 int flush_dirty_fat_buffer(fsdata *mydata)
 {
@@ -736,10 +737,7 @@ static void *next_cluster(fat_itr *itr)
 	if (itr->last_cluster)
 		return NULL;
 
-	if (itr->fsdata->fatsize != 32 && itr->is_root)
-		sect = mydata->rootdir_sect;
-	else
-		sect = clust_to_sect(itr->fsdata, itr->next_clust);
+	sect = clust_to_sect(itr->fsdata, itr->next_clust);
 
 	debug("FAT read(sect=%d), clust_size=%d, DIRENTSPERBLOCK=%zd\n",
 	      sect, itr->fsdata->clust_size, DIRENTSPERBLOCK);
